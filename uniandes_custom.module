@@ -1,0 +1,76 @@
+<?php
+/*
+* Miguel Ruiz
+* hook_init()
+*/
+function uniandes_custom_init()
+{
+  if (!path_is_admin(current_path())) {
+    drupal_add_css(drupal_get_path('module', 'uniandes_medicina') . "/css/customg.css");
+  }
+}
+
+function uniandes_custom_form_alter(&$form, &$form_state, $form_id)
+{
+
+  if ($form_id == "layouts_node_form") {
+    $form['#validate'][] = 'uniandes_custom_form_validate';
+
+    /*echo '<pre>';
+    print_r($form);
+    //print_r($form["field_items_content"]["es"][0]["field_titulo"]);
+        //exit(0);
+        echo "</pre>";*/
+  }
+}
+
+
+function uniandes_custom_form_validate($form, &$form_state)
+{
+  //uniandes_custom_recorro($form_state["values"]);
+}
+
+
+function uniandes_custom_recorro($matriz)
+{
+  foreach ($matriz as $key => $value) {
+    if (is_array($value)) {
+      //si es un array sigo recorriendo
+      //echo 'key:' . $key;
+      //echo '<br>';
+      if($key == "url" || $key == "video_url"){
+        if(!uniandes_custom_validar($value)){
+          form_set_error('field_title', t('Revise los campos de tipo enlace y de video que sean una url válida'));
+          break;
+        }
+      }
+      uniandes_custom_recorro($value);
+    } /*else {
+      //si es un elemento lo muestro
+      echo $key . ': ' . $value;
+      echo '<br>';
+    }*/
+  }
+}
+
+function uniandes_custom_validar($url){
+  return FALSE;
+}
+
+/**
+ * Implements of hook_field_widget_form_alter().
+ */
+
+/*function uniandes_custom_field_widget_form_alter(&$element, &$form_state, $context)
+{
+  // Add a css class to widget form elements for all fields of type mytype.
+  if ($context['field']['type'] == 'field_collection' && $element['#entity']->field_name == 'field_video_banner') {
+    array_unshift($element['#element_validate'], 'uniandes_custom_field_video_banner_validate');
+    //$element['field_ingredient_unit'][LANGUAGE_NONE][0]['value']['#autocomplete_path'] = 'recipe/unit/autocomplete';
+  }
+}
+
+function uniandes_custom_field_video_banner_validate(&$element, &$form_state, $context)
+{
+  form_set_error('mail', t('Revise el error4 del video'));
+}*/
